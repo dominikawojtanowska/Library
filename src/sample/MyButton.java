@@ -3,9 +3,12 @@ package sample;
 import javafx.animation.FillTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
+import javafx.geometry.Insets;
 import javafx.geometry.VPos;
+import javafx.scene.control.Button;
+import javafx.scene.effect.Effect;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
@@ -13,36 +16,37 @@ import javafx.scene.text.TextBoundsType;
 import javafx.util.Duration;
 
 
-public class MyButton extends Circle {
-    private String name;
+public class MyButton extends Button {
 
-    MyButton (String name, Pane pane, double x, double y){
-        super(x,y,50);
-        this.name= name;
-        this.setFill(Color.ORANGE);
-        this.setStroke(Color.DARKBLUE); this.setStrokeWidth(5); this.setFill(Color.LIGHTCYAN);
-        Text text = new Text(name); text.setTextOrigin(VPos.CENTER); text.setX(x); text.setY(y);
-        text.setDisable(true);
-        
+
+    MyButton (String name, double y){
+        super(name);
+        setBackground(new Background(new BackgroundFill(Color.SALMON, CornerRadii.EMPTY , new Insets(0,0,0,0))));
+        setLayoutY(y);
+        setPrefSize(150,50);
+        setStyle("-fx-border-color:black");
+        setOpacity(0.70);
+        AnchorPane.setLeftAnchor(this, 70.);
+        AnchorPane.setRightAnchor(this, 70.);
+
 
         this.addEventHandler(MouseEvent.MOUSE_ENTERED, e ->{
-            FillTransition ft = new FillTransition(Duration.millis(500), this , (Color) this.getFill(), Color.ORANGE);
+            this.setOpacity(1);
+            this.toFront();
             ScaleTransition st = new ScaleTransition(Duration.millis(500), this);
-            st.setToX(1.20); st.setToY(1.20);
-            ParallelTransition pt = new ParallelTransition(ft, st);
-            pt.play();
+            st.setToX(1.20); st.setToY(1.10);
+            st.play();
         });
         this.addEventHandler(MouseEvent.MOUSE_EXITED,  e ->{
-            FillTransition ft = new FillTransition(Duration.millis(500), this , (Color) this.getFill(), Color.LIGHTCYAN);
+            setOpacity(0.70);
             ScaleTransition st = new ScaleTransition(Duration.millis(500), this);
             st.setToX(1);  st.setToY(1);
-            ParallelTransition pt = new ParallelTransition(ft, st);
-            pt.play();
+            st.play();
         } );
 
-        pane.getChildren().addAll(this, text);
 
 
     }
+
 
 }

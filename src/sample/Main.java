@@ -19,8 +19,9 @@ import java.sql.DriverManager;
 
 public class Main extends Application {
 
-    static double scale = 1 ; // na poczatku 1 pozniej bedzie sie rozmieszczac zgdnie ze skalowaniem
+
     @Override
+
     public void start(Stage primaryStage) throws Exception{
         LibraryDatabaseService lb = new LibraryDatabaseService();
         GUI gui = new GUI(primaryStage, lb);
