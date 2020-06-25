@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 
 public class LibraryDatabaseService {
     LibraryDatabaseService(){
-        Connection c = null;
+        Connection c = null;/*
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
@@ -16,6 +16,6 @@ public class LibraryDatabaseService {
             System.err.println(e.getClass().getName()+": "+e.getMessage());
             System.exit(0);
         }
-        System.out.println("Opened database successfully");
+        System.out.println("Opened database successfully"); */
     }
 }

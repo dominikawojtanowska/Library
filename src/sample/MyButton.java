@@ -37,6 +37,7 @@ public class MyButton extends Button {
             st.setToX(1.20); st.setToY(1.10);
             st.play();
         });
+
         this.addEventHandler(MouseEvent.MOUSE_EXITED,  e ->{
             setOpacity(0.70);
             ScaleTransition st = new ScaleTransition(Duration.millis(500), this);
