@@ -19,22 +19,23 @@ import javax.swing.*;
 import java.io.FileInputStream;
 
 public class GUI {
-    Pane mainPane =null;
+    Pane mainPane;
     Pane addBookPane=null;
     Pane deleteBookPane=null;
     Pane addClientPane=null;
     Pane deleteClientPane=null;
     Pane rentBookPane=null;
-    Pane showRecommended=null;
+    Pane showMostPopular=null;
     private Scene scene;
+    LibraryDatabaseService lbs;
 
 
     public GUI(Stage stage, LibraryDatabaseService lbs) throws Exception {
+        this.lbs=lbs;
         mainPane=crateMainPane();
         scene = new Scene (mainPane);
         stage.setScene(scene);
         stage.show();
-
     }
 
     private Pane crateMainPane() {
@@ -42,12 +43,12 @@ public class GUI {
         pane.setBackground(new Background(new BackgroundFill(Color.LIGHTSTEELBLUE, CornerRadii.EMPTY, new Insets(0,0,0, 0))));
         pane.setPrefSize(300,400); pane.setMaxSize(600, 1500);
         MyButton[] buttons = new MyButton[6];
-        buttons[0] = new MyButton("Add Client",  50);
-        buttons[1] = new MyButton("Delete Client",  100);
-        buttons[2] = new MyButton("Add Book",  150);
-        buttons[3] = new MyButton("Delete Book",  200);
-        buttons[4] = new MyButton("Rent Book",  250);
-        buttons[5] = new MyButton("Recomend Book",  300);
+        buttons[0] = new MyButton("Add client",  50);
+        buttons[1] = new MyButton("Delete client",  100);
+        buttons[2] = new MyButton("Add book",  150);
+        buttons[3] = new MyButton("Delete book",  200);
+        buttons[4] = new MyButton("Rent/Give back book",  250);
+        buttons[5] = new MyButton("Show most popular",  300);
         pane.getChildren().addAll(buttons);
 
         buttons[0].setOnAction(e ->{
@@ -80,8 +81,49 @@ public class GUI {
             }
             scene.setRoot(rentBookPane);
         });
+        buttons[5].setOnAction(e->{
+            if(showMostPopular==null) showMostPopular=createShowRecommendedPane();
+            scene.setRoot(showMostPopular);
+        });
         return pane;
+    }
 
+    private Pane createShowRecommendedPane() {
+        Pane pane =new AnchorPane();
+        pane.setBackground(new Background(new BackgroundFill(Color.LIGHTSTEELBLUE, CornerRadii.EMPTY, new Insets(0,0,0, 0))));
+        pane.setPrefSize(300,400);
+        Text text = new Text("Pick by witch category: "); text.setX(10); text.setY(20);
+        CheckBox cba = new CheckBox("by reader's age"); cba.setLayoutY(35); cba.setLayoutX(10);
+        TextField ageTF = new TextField(); ageTF.setLayoutY(30);
+        AnchorPane.setLeftAnchor(ageTF, 130.);
+        AnchorPane.setRightAnchor(ageTF, 20.);
+        ageTF.setDisable(true);
+        CheckBox cbc = new CheckBox("by category"); cbc.setLayoutY(75); cbc.setLayoutX(10);
+        TextField categoryTF = new TextField(); categoryTF.setLayoutY(70);
+        AnchorPane.setLeftAnchor(categoryTF, 130.);
+        AnchorPane.setRightAnchor(categoryTF, 20.);
+        categoryTF.setDisable(true);
+        cba.setOnAction(e->{
+            if(cba.isSelected()){
+                ageTF.setDisable(false);
+            }
+            else{
+                ageTF.setDisable(true);
+            }
+        });
+        cbc.setOnAction(e->{
+            if(cbc.isSelected()){
+                categoryTF.setDisable(false);
+            }
+            else{
+                categoryTF.setDisable(true);
+            }
+        });
+        MyButton goButton = new MyButton("Show", 110);
+        ImageView backButton = createBackIcon();
+        goButton.setPrefHeight(25);
+        pane.getChildren().addAll(text, cba,ageTF, cbc, categoryTF, goButton, backButton);
+        return pane;
     }
 
     private Pane createRentBookPane() {
@@ -107,7 +149,7 @@ public class GUI {
         Pane pane =new AnchorPane();
         pane.setBackground(new Background(new BackgroundFill(Color.LIGHTSTEELBLUE, CornerRadii.EMPTY, new Insets(0,0,0, 0))));
         pane.setPrefSize(300,400);
-        Text enterBookData = new Text("Please enter client;s card's number:"); enterBookData.setY(25); enterBookData.setX(10);
+        Text enterBookData = new Text("Please enter client's card's number:"); enterBookData.setY(25); enterBookData.setX(10);
         TextField isbnTF = new TextField(); isbnTF.setLayoutY(50);
         AnchorPane.setLeftAnchor(isbnTF, 20.);
         AnchorPane.setRightAnchor(isbnTF, 20.);
@@ -174,9 +216,12 @@ public class GUI {
             cbm.setSelected(true);
         });
         AnchorPane.setLeftAnchor(cbf, 130.);
-        MyButton ok = new MyButton("OK", 250);
+        MyButton okButton = new MyButton("OK", 250);
+        okButton.setOnAction(e->{
+            //if(lbs.addClient(nameTF.))
+        });
         ImageView backButton = createBackIcon();
-        pane.getChildren().addAll(enterClientData,name,surname,age,sex,nameTF,surnameTF,ageTF,cbm, cbf, ok,backButton);
+        pane.getChildren().addAll(enterClientData,name,surname,age,sex,nameTF,surnameTF,ageTF,cbm, cbf, okButton,backButton);
         return pane;
     }
 
@@ -215,6 +260,5 @@ public class GUI {
         } );
         return backIcon;
     }
-
 
 }
