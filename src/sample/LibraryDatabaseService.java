@@ -1,9 +1,6 @@
 package sample;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class LibraryDatabaseService {
     Connection con = null;
@@ -50,7 +47,20 @@ public class LibraryDatabaseService {
             return e.getMessage();
         }
     }
-    public String addDeleteRental() {
+    public String addDeleteRental(String isbn, int cardNumber) {
+        try {
+            ResultSet rs = stat.executeQuery("SELECT * FROM rental where isbn = '" + isbn + "' AND dateOfReturn IS NULL") ;// we want to avoid situation where 2 people are renting one book in the same time so we are chcecking it
+            if (rs.next()) return "This book hasn't been returned yet";
+
+            rs=stat.executeQuery("SELECT * FROM rental where isbn = '" + isbn + "' AND dateOfReturn IS NULL AND cardnumber=" + cardNumber);
+            if (rs.next()) {
+                //client want to return book so we have to do update and fill dateofreturn with current date
+                //int r = stat.executeUpdate("UPDATE ON rental WHERE isbn = '\" + isbn + \"' AND dateOfReturn IS NULL AND cardnumber=\" + cardNumber");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return " wyporzyczono oddano";
     }
 

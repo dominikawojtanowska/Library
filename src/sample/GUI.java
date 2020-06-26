@@ -154,7 +154,7 @@ public class GUI {
             Matcher isbnMatcher = patternEmpty.matcher(cardNumberTF.getText());
             Matcher cardNumberMatcher = patternEmpty.matcher(cardNumberTF.getText());
             if(!isbnMatcher.matches() && !cardNumberMatcher.matches()){
-                popText.setText(lbs.addDeleteRental());
+                popText.setText(lbs.addDeleteRental(isbnTF.getText() , Integer.parseInt(cardNumber.getText())));
             }
             else{
                 popText.setText("Lack of data, or bad provided data");
