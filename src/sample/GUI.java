@@ -5,6 +5,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.PopupControl;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,9 +15,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
 import javax.swing.*;
 import java.io.FileInputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GUI {
     Pane mainPane;
@@ -28,7 +30,10 @@ public class GUI {
     Pane showMostPopular=null;
     private Scene scene;
     LibraryDatabaseService lbs;
-
+    Stage popupStage = new Stage();
+    Pattern pattern = Pattern.compile("[A-Z][a-z]+");
+    Pattern patternYear = Pattern.compile("[1-2][0-9]{3}");
+    Pattern patternEmpty = Pattern.compile("\\s*");
 
     public GUI(Stage stage, LibraryDatabaseService lbs) throws Exception {
         this.lbs=lbs;
@@ -47,10 +52,9 @@ public class GUI {
         buttons[1] = new MyButton("Delete client",  100);
         buttons[2] = new MyButton("Add book",  150);
         buttons[3] = new MyButton("Delete book",  200);
-        buttons[4] = new MyButton("Rent/Give back book",  250);
+        buttons[4] = new MyButton("Rent/Return book",  250);
         buttons[5] = new MyButton("Show most popular",  300);
         pane.getChildren().addAll(buttons);
-
         buttons[0].setOnAction(e ->{
             if(addClientPane==null){
                 addClientPane=creteAddClientPane();
@@ -132,16 +136,33 @@ public class GUI {
         pane.setPrefSize(300,400);
         Text enterRentalData = new Text("Please enter rental data below:"); enterRentalData.setY(25); enterRentalData.setX(10);
         Text isbn = new Text ("ISBN: "); isbn.setY(70); isbn.setX(10);
-        Text ccn = new Text ("Client's card's number: "); ccn.setY(120); ccn.setX(10);
+        Text cardNumber = new Text ("Client's card's number: "); cardNumber.setY(120); cardNumber.setX(10);
         TextField isbnTF = new TextField(); isbnTF.setLayoutY(50);
         AnchorPane.setLeftAnchor(isbnTF, 70.);
         AnchorPane.setRightAnchor(isbnTF, 20.);
-        TextField ccnTF = new TextField(); ccnTF.setLayoutY(100);
-        AnchorPane.setLeftAnchor(ccnTF, 150.);
-        AnchorPane.setRightAnchor(ccnTF, 20.);
-        MyButton ok = new MyButton("OK", 270);
+        TextField cardNumberTF = new TextField(); cardNumberTF.setLayoutY(100);
+        AnchorPane.setLeftAnchor(cardNumberTF, 150.);
+        AnchorPane.setRightAnchor(cardNumberTF, 20.);
+        MyButton okButton = new MyButton("OK", 270);
+        okButton.setOnAction(e->{
+            Pane popupPane = new StackPane();
+            Scene popupScene= new Scene(popupPane);
+            popupStage.setScene(popupScene);
+            popupPane.setPrefSize(200,50);
+            Text popText = new Text();
+            popupPane.getChildren().add(popText);
+            Matcher isbnMatcher = patternEmpty.matcher(cardNumberTF.getText());
+            Matcher cardNumberMatcher = patternEmpty.matcher(cardNumberTF.getText());
+            if(!isbnMatcher.matches() && !cardNumberMatcher.matches()){
+                popText.setText(lbs.addDeleteRental());
+            }
+            else{
+                popText.setText("Lack of data, or bad provided data");
+            }
+            popupStage.show();;
+        });
         ImageView backButton = createBackIcon();
-        pane.getChildren().addAll(enterRentalData, isbn, ccn, isbnTF, ccnTF, ok,backButton);
+        pane.getChildren().addAll(enterRentalData, isbn, cardNumber, isbnTF, cardNumberTF, okButton ,backButton);
         return pane;
     }
 
@@ -149,13 +170,29 @@ public class GUI {
         Pane pane =new AnchorPane();
         pane.setBackground(new Background(new BackgroundFill(Color.LIGHTSTEELBLUE, CornerRadii.EMPTY, new Insets(0,0,0, 0))));
         pane.setPrefSize(300,400);
-        Text enterBookData = new Text("Please enter client's card's number:"); enterBookData.setY(25); enterBookData.setX(10);
-        TextField isbnTF = new TextField(); isbnTF.setLayoutY(50);
-        AnchorPane.setLeftAnchor(isbnTF, 20.);
-        AnchorPane.setRightAnchor(isbnTF, 20.);
-        MyButton ok = new MyButton("OK", 270);
+        Text enterClientData = new Text("Please enter client's card's number:"); enterClientData.setY(25); enterClientData.setX(10);
+        TextField cardNumberTF = new TextField(); cardNumberTF.setLayoutY(50);
+        AnchorPane.setLeftAnchor(cardNumberTF, 20.);
+        AnchorPane.setRightAnchor(cardNumberTF, 20.);
+        MyButton okButton = new MyButton("OK", 270);
+        okButton.setOnAction(e->{
+            Pane popupPane = new StackPane();
+            Scene popupScene= new Scene(popupPane);
+            popupStage.setScene(popupScene);
+            popupPane.setPrefSize(200,50);
+            Text popText = new Text();
+            popupPane.getChildren().add(popText);
+            Matcher nameMatcher = patternEmpty.matcher(cardNumberTF.getText());
+            if(!nameMatcher.matches()){
+                popText.setText(lbs.deleteClient(Integer.parseInt(cardNumberTF.getText())));
+            }
+            else{
+                popText.setText("Lack of data, or bad provided data");
+            }
+            popupStage.show();;
+        });
         ImageView backButton = createBackIcon();
-        pane.getChildren().addAll(enterBookData,  isbnTF, ok,backButton);
+        pane.getChildren().addAll(enterClientData, cardNumberTF, okButton ,backButton);
         return pane;
     }
 
@@ -180,9 +217,28 @@ public class GUI {
         TextField categoryTF = new TextField(); categoryTF.setLayoutY(200);
         AnchorPane.setLeftAnchor(categoryTF, 70.);
         AnchorPane.setRightAnchor(categoryTF, 20.);
-        MyButton ok = new MyButton("OK", 270);
+        MyButton okButton = new MyButton("OK", 250);
+        okButton.setOnAction(e->{
+            Pane popupPane = new StackPane();
+            Scene popupScene= new Scene(popupPane);
+            popupStage.setScene(popupScene);
+            popupPane.setPrefSize(200,50);
+            Text popText = new Text();
+            popupPane.getChildren().add(popText);
+            Matcher isbnMatcher = patternEmpty.matcher(isbnTF.getText());
+            Matcher titleMatcher = patternEmpty.matcher(titleTF.getText());
+            Matcher authorMatcher = patternEmpty.matcher(authorTF.getText());
+            Matcher categoryMatcher = patternEmpty.matcher(categoryTF.getText());
+            if(!isbnMatcher.matches() && !titleMatcher.matches() && !authorMatcher.matches() && !categoryMatcher.matches()){
+                popText.setText(lbs.addBook(isbnTF.getText(), titleTF.getText(), authorTF.getText(), categoryTF.getText()));
+            }
+            else{
+                popText.setText("Lack of data, or bad provided data");
+            }
+            popupStage.show();;
+        });
         ImageView backButton = createBackIcon();
-        pane.getChildren().addAll(enterBookData, isbn, title, author, category, isbnTF, titleTF, authorTF, categoryTF, ok,backButton);
+        pane.getChildren().addAll(enterBookData, isbn, title, author, category, isbnTF, titleTF, authorTF, categoryTF, okButton,backButton);
         return pane;
     }
 
@@ -193,7 +249,7 @@ public class GUI {
         Text enterClientData = new Text("Please enter Client data below:"); enterClientData.setY(25); enterClientData.setX(10);
         Text name = new Text ("Name: "); name.setY(70); name.setX(10);
         Text surname = new Text ("Surname: "); surname.setY(120); surname.setX(10);
-        Text age = new Text ("Age (optionally): "); age.setY(170); age.setX(10);
+        Text year = new Text ("Year of birth (optionally): "); year.setY(170); year.setX(10);
         Text sex= new Text ("Sex: "); sex.setY(220); sex.setX(10);
         TextField nameTF = new TextField(); nameTF.setLayoutY(50);
         AnchorPane.setLeftAnchor(nameTF, 70.);
@@ -201,9 +257,9 @@ public class GUI {
         TextField surnameTF = new TextField(); surnameTF.setLayoutY(100);
         AnchorPane.setLeftAnchor(surnameTF, 70.);
         AnchorPane.setRightAnchor(surnameTF, 20.);
-        TextField ageTF = new TextField(); ageTF.setLayoutY(150);
-        AnchorPane.setLeftAnchor(ageTF, 110.);
-        AnchorPane.setRightAnchor(ageTF, 20.);
+        TextField yearTF = new TextField(); yearTF.setLayoutY(150);
+        AnchorPane.setLeftAnchor(yearTF, 150.);
+        AnchorPane.setRightAnchor(yearTF, 20.);
         CheckBox cbm = new CheckBox("male"); cbm.setLayoutY(205);
         AnchorPane.setLeftAnchor(cbm,70.);
         CheckBox cbf = new CheckBox("female"); cbf.setLayoutY(205);
@@ -218,10 +274,37 @@ public class GUI {
         AnchorPane.setLeftAnchor(cbf, 130.);
         MyButton okButton = new MyButton("OK", 250);
         okButton.setOnAction(e->{
-            //if(lbs.addClient(nameTF.))
+            Pane popupPane = new StackPane();
+            Scene popupScene= new Scene(popupPane);
+            popupStage.setScene(popupScene);
+            popupPane.setPrefSize(200,50);
+            Text popText = new Text();
+            popupPane.getChildren().add(popText);
+            Matcher nameMatcher = pattern.matcher(nameTF.getText());
+            Matcher surnameMatcher = pattern.matcher(surnameTF.getText());
+            Matcher yearMatcher = patternYear.matcher(yearTF.getText());
+            Matcher emptyYearMatcher = patternEmpty.matcher(yearTF.getText());
+            if((cbm.isSelected() || cbf.isSelected()) && nameMatcher.matches() && surnameMatcher.matches() && (yearMatcher.matches()||emptyYearMatcher.matches())){
+                char sexChar;
+                if(cbm.isSelected()){
+                    sexChar= 'm';
+                }else{
+                    sexChar='f';
+                }
+                if(emptyYearMatcher.matches()){
+                    popText.setText(lbs.addClient(nameTF.getText(), surnameTF.getText(), sexChar));
+                }
+                else{
+                    popText.setText(lbs.addClient(nameTF.getText(), surnameTF.getText(),Integer.parseInt(yearTF.getText()), sexChar));
+                }
+            }
+            else{
+                popText.setText("Lack of data, or bad provided data");
+            }
+            popupStage.show();;
         });
         ImageView backButton = createBackIcon();
-        pane.getChildren().addAll(enterClientData,name,surname,age,sex,nameTF,surnameTF,ageTF,cbm, cbf, okButton,backButton);
+        pane.getChildren().addAll(enterClientData,name,surname,year,sex,nameTF,surnameTF,yearTF,cbm, cbf, okButton,backButton);
         return pane;
     }
 
@@ -234,9 +317,25 @@ public class GUI {
         TextField isbnTF = new TextField(); isbnTF.setLayoutY(50);
         AnchorPane.setLeftAnchor(isbnTF, 70.);
         AnchorPane.setRightAnchor(isbnTF, 20.);
-        MyButton ok = new MyButton("OK", 270);
+        MyButton okButton = new MyButton("OK", 270);
+        okButton.setOnAction(e->{
+            Pane popupPane = new StackPane();
+            Scene popupScene= new Scene(popupPane);
+            popupStage.setScene(popupScene);
+            popupPane.setPrefSize(200,50);
+            Text popText = new Text();
+            popupPane.getChildren().add(popText);
+            Matcher isbnMatcher = patternEmpty.matcher(isbnTF.getText());
+            if(!isbnMatcher.matches()){
+                popText.setText(lbs.deleteBook(isbnTF.getText()));
+            }
+            else{
+                popText.setText("Lack of data, or bad provided data");
+            }
+            popupStage.show();;
+        });
         ImageView backButton = createBackIcon();
-        pane.getChildren().addAll(enterBookData, isbn,  isbnTF, ok,backButton);
+        pane.getChildren().addAll(enterBookData, isbn,  isbnTF, okButton ,backButton);
         return pane;
     }
 

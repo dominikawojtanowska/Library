@@ -18,7 +18,6 @@ import javafx.util.Duration;
 
 public class MyButton extends Button {
 
-
     MyButton (String name, double y){
         super(name);
         setBackground(new Background(new BackgroundFill(Color.SALMON, CornerRadii.EMPTY , new Insets(0,0,0,0))));
@@ -28,26 +27,19 @@ public class MyButton extends Button {
         setOpacity(0.70);
         AnchorPane.setLeftAnchor(this, 70.);
         AnchorPane.setRightAnchor(this, 70.);
-
-
-        this.addEventHandler(MouseEvent.MOUSE_ENTERED, e ->{
+        this.addEventHandler(MouseEvent.MOUSE_ENTERED, e->{
             this.setOpacity(1);
             this.toFront();
             ScaleTransition st = new ScaleTransition(Duration.millis(500), this);
             st.setToX(1.20); st.setToY(1.10);
             st.play();
         });
-
-        this.addEventHandler(MouseEvent.MOUSE_EXITED,  e ->{
+        this.addEventHandler(MouseEvent.MOUSE_EXITED, e->{
             setOpacity(0.70);
             ScaleTransition st = new ScaleTransition(Duration.millis(500), this);
             st.setToX(1);  st.setToY(1);
             st.play();
-        } );
-
-
-
+        });
     }
-
 
 }
