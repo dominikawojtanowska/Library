@@ -209,7 +209,7 @@ public class GUI {
         pane.setPrefSize(300,400);
         Text enterRentalData = new Text("Please enter rental data below:"); enterRentalData.setY(25); enterRentalData.setX(10);
         Text isbn = new Text ("ISBN: "); isbn.setY(70); isbn.setX(10);
-        Text cardNumber = new Text ("Client's card's number: "); cardNumber.setY(120); cardNumber.setX(10);
+        Text cardNumber = new Text ("Client's card number: "); cardNumber.setY(120); cardNumber.setX(10);
         TextField isbnTF = new TextField(); isbnTF.setLayoutY(50);
         AnchorPane.setLeftAnchor(isbnTF, 70.);
         AnchorPane.setRightAnchor(isbnTF, 20.);
@@ -244,7 +244,7 @@ public class GUI {
         Pane pane =new AnchorPane();
         pane.setBackground(background);
         pane.setPrefSize(300,400);
-        Text enterClientData = new Text("Please enter client's card's number:"); enterClientData.setY(25); enterClientData.setX(10);
+        Text enterClientData = new Text("Please enter client's card number:"); enterClientData.setY(25); enterClientData.setX(10);
         TextField cardNumberTF = new TextField(); cardNumberTF.setLayoutY(50);
         AnchorPane.setLeftAnchor(cardNumberTF, 20.);
         AnchorPane.setRightAnchor(cardNumberTF, 20.);
@@ -259,7 +259,11 @@ public class GUI {
             popupPane.getChildren().add(popText);
             Matcher nameMatcher = patternEmpty.matcher(cardNumberTF.getText());
             if(!nameMatcher.matches()){
-                popText.setText(lbs.deleteClient(Integer.parseInt(cardNumberTF.getText())));
+                try {
+                    popText.setText(lbs.deleteClient(Integer.parseInt(cardNumberTF.getText())));
+                }catch(Exception exc){
+                    popText.setText("Lack of data, or bad provided data");
+                }
             }
             else{
                 popText.setText("Lack of data, or bad provided data");
@@ -322,7 +326,7 @@ public class GUI {
         Pane pane =new AnchorPane();
         pane.setBackground(background);
         pane.setPrefSize(300,400);
-        Text enterClientData = new Text("Please enter Client data below:"); enterClientData.setY(25); enterClientData.setX(10);
+        Text enterClientData = new Text("Please enter client data below:"); enterClientData.setY(25); enterClientData.setX(10);
         Text name = new Text ("Name: "); name.setY(70); name.setX(10);
         Text surname = new Text ("Surname: "); surname.setY(120); surname.setX(10);
         Text year = new Text ("Year of birth (optionally): "); year.setY(170); year.setX(10);
