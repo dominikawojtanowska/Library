@@ -34,9 +34,11 @@ public class GUI {
     Pattern pattern = Pattern.compile("[A-Z][a-z]+");
     Pattern patternYear = Pattern.compile("[1-2][0-9]{3}");
     Pattern patternEmpty = Pattern.compile("\\s*");
+    Background background=new Background(new BackgroundFill(Color.LIGHTSTEELBLUE, CornerRadii.EMPTY, new Insets(0,0,0, 0)));
 
     public GUI(Stage stage, LibraryDatabaseService lbs) throws Exception {
         this.lbs=lbs;
+        stage.setTitle("Library");
         mainPane=crateMainPane();
         scene = new Scene (mainPane);
         stage.setScene(scene);
@@ -45,7 +47,7 @@ public class GUI {
 
     private Pane crateMainPane() {
         Pane pane =new AnchorPane();
-        pane.setBackground(new Background(new BackgroundFill(Color.LIGHTSTEELBLUE, CornerRadii.EMPTY, new Insets(0,0,0, 0))));
+        pane.setBackground(background);
         pane.setPrefSize(300,400); pane.setMaxSize(600, 1500);
         MyButton[] buttons = new MyButton[6];
         buttons[0] = new MyButton("Add client",  50);
@@ -94,7 +96,7 @@ public class GUI {
 
     private Pane createShowRecommendedPane() {
         Pane pane =new AnchorPane();
-        pane.setBackground(new Background(new BackgroundFill(Color.LIGHTSTEELBLUE, CornerRadii.EMPTY, new Insets(0,0,0, 0))));
+        pane.setBackground(background);
         pane.setPrefSize(300,400);
         Text text = new Text("Pick by witch category: "); text.setX(10); text.setY(20);
         CheckBox cba = new CheckBox("by reader's age"); cba.setLayoutY(35); cba.setLayoutX(10);
@@ -132,7 +134,7 @@ public class GUI {
 
     private Pane createRentBookPane() {
         Pane pane =new AnchorPane();
-        pane.setBackground(new Background(new BackgroundFill(Color.LIGHTSTEELBLUE, CornerRadii.EMPTY, new Insets(0,0,0, 0))));
+        pane.setBackground(background);
         pane.setPrefSize(300,400);
         Text enterRentalData = new Text("Please enter rental data below:"); enterRentalData.setY(25); enterRentalData.setX(10);
         Text isbn = new Text ("ISBN: "); isbn.setY(70); isbn.setX(10);
@@ -148,6 +150,7 @@ public class GUI {
             Pane popupPane = new StackPane();
             Scene popupScene= new Scene(popupPane);
             popupStage.setScene(popupScene);
+            popupPane.setBackground(background);
             popupPane.setPrefSize(200,50);
             Text popText = new Text();
             popupPane.getChildren().add(popText);
@@ -168,7 +171,7 @@ public class GUI {
 
     private Pane createDeleteClientPane() {
         Pane pane =new AnchorPane();
-        pane.setBackground(new Background(new BackgroundFill(Color.LIGHTSTEELBLUE, CornerRadii.EMPTY, new Insets(0,0,0, 0))));
+        pane.setBackground(background);
         pane.setPrefSize(300,400);
         Text enterClientData = new Text("Please enter client's card's number:"); enterClientData.setY(25); enterClientData.setX(10);
         TextField cardNumberTF = new TextField(); cardNumberTF.setLayoutY(50);
@@ -179,6 +182,7 @@ public class GUI {
             Pane popupPane = new StackPane();
             Scene popupScene= new Scene(popupPane);
             popupStage.setScene(popupScene);
+            popupPane.setBackground(background);
             popupPane.setPrefSize(200,50);
             Text popText = new Text();
             popupPane.getChildren().add(popText);
@@ -198,7 +202,7 @@ public class GUI {
 
     private Pane createAddBookPane()  {
         Pane pane =new AnchorPane();
-        pane.setBackground(new Background(new BackgroundFill(Color.LIGHTSTEELBLUE, CornerRadii.EMPTY, new Insets(0,0,0, 0))));
+        pane.setBackground(background);
         pane.setPrefSize(300,400);
         Text enterBookData = new Text("Please enter book data below:"); enterBookData.setY(25); enterBookData.setX(10);
         Text isbn = new Text ("ISBN: "); isbn.setY(70); isbn.setX(10);
@@ -222,6 +226,7 @@ public class GUI {
             Pane popupPane = new StackPane();
             Scene popupScene= new Scene(popupPane);
             popupStage.setScene(popupScene);
+            popupPane.setBackground(background);
             popupPane.setPrefSize(200,50);
             Text popText = new Text();
             popupPane.getChildren().add(popText);
@@ -244,7 +249,7 @@ public class GUI {
 
     private Pane creteAddClientPane() {
         Pane pane =new AnchorPane();
-        pane.setBackground(new Background(new BackgroundFill(Color.LIGHTSTEELBLUE, CornerRadii.EMPTY, new Insets(0,0,0, 0))));
+        pane.setBackground(background);
         pane.setPrefSize(300,400);
         Text enterClientData = new Text("Please enter Client data below:"); enterClientData.setY(25); enterClientData.setX(10);
         Text name = new Text ("Name: "); name.setY(70); name.setX(10);
@@ -277,6 +282,7 @@ public class GUI {
             Pane popupPane = new StackPane();
             Scene popupScene= new Scene(popupPane);
             popupStage.setScene(popupScene);
+            popupPane.setBackground(background);
             popupPane.setPrefSize(200,50);
             Text popText = new Text();
             popupPane.getChildren().add(popText);
@@ -310,7 +316,7 @@ public class GUI {
 
     private Pane createDeleteBookPane() {
         Pane pane =new AnchorPane();
-        pane.setBackground(new Background(new BackgroundFill(Color.LIGHTSTEELBLUE, CornerRadii.EMPTY, new Insets(0,0,0, 0))));
+        pane.setBackground(background);
         pane.setPrefSize(300,400);
         Text enterBookData = new Text("Please enter book data below:"); enterBookData.setY(25); enterBookData.setX(10);
         Text isbn = new Text ("ISBN: "); isbn.setY(70); isbn.setX(10);
@@ -320,6 +326,7 @@ public class GUI {
         MyButton okButton = new MyButton("OK", 270);
         okButton.setOnAction(e->{
             Pane popupPane = new StackPane();
+            popupPane.setBackground(background);
             Scene popupScene= new Scene(popupPane);
             popupStage.setScene(popupScene);
             popupPane.setPrefSize(200,50);

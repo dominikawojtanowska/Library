@@ -8,15 +8,12 @@ public class LibraryDatabaseService {
 
     LibraryDatabaseService(){
         try {
-            Class.forName("org.postgresql.Driver");
-            con = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/postgres",
-                            "postgres", "dominika");
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library","root", "");
             stat = con.createStatement();
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println(e.getClass().getName()+": "+e.getMessage());
-            System.exit(0);
         }
     }
 

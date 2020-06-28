@@ -21,7 +21,6 @@ public class Main extends Application {
 
 
     @Override
-
     public void start(Stage primaryStage) throws Exception{
         LibraryDatabaseService lb = new LibraryDatabaseService();
         GUI gui = new GUI(primaryStage, lb);
