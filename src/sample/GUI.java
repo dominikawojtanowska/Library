@@ -1,12 +1,11 @@
 package sample;
 
 import javafx.animation.ScaleTransition;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.PopupControl;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -17,6 +16,9 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javax.swing.*;
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -125,10 +127,79 @@ public class GUI {
                 categoryTF.setDisable(true);
             }
         });
+        TableView bookTable = new TableView();
+        AnchorPane.setTopAnchor(bookTable, 145.);
+        AnchorPane.setBottomAnchor(bookTable, 70.);
+        AnchorPane.setLeftAnchor(bookTable, 20.);
+        AnchorPane.setRightAnchor(bookTable, 20.);
+        TableColumn<String, Book> column1 = new TableColumn<>("isbn");
+        column1.setCellValueFactory(new PropertyValueFactory<>("isbn"));
+        TableColumn<String, Book> column2 = new TableColumn<>("Title");
+        column2.setCellValueFactory(new PropertyValueFactory<>("title"));
+        TableColumn<String, Book> column3 = new TableColumn<>("Author");
+        column3.setCellValueFactory(new PropertyValueFactory<>("author"));
+        TableColumn<String, Book> column4 = new TableColumn<>("Category");
+        column4.setCellValueFactory(new PropertyValueFactory<>("category"));
+        bookTable.getColumns().addAll(column1, column2,column3,column4);
         MyButton goButton = new MyButton("Show", 110);
+        goButton.setOnAction(e->{
+            Pane popupPane = new StackPane();
+            Scene popupScene= new Scene(popupPane);
+            popupStage.setScene(popupScene);
+            popupPane.setBackground(background);
+            popupPane.setPrefSize(200,50);
+            Text popText = new Text();
+            popupPane.getChildren().add(popText);
+            boolean success = false;
+            boolean goodAgeFormat = false;
+            ObservableList<Book> popularBookList = null;
+            if(cba.isSelected() || cbc.isSelected()){
+                int yearOfBirth = 0;
+                Matcher categoryMatcher = patternEmpty.matcher(categoryTF.getText());
+                if(cba.isSelected()){
+                    try {
+                        Date now = new Date();
+                        String[] dateParts = now.toString().split(" ");
+                        yearOfBirth = Integer.parseInt(dateParts[dateParts.length-1]) - Integer.parseInt(ageTF.getText());
+                        goodAgeFormat=true;
+                    }catch(Exception exc){
+                        popText.setText("Bad age format");
+                        popupStage.show();
+
+                    }
+                    if(cbc.isSelected()){
+                        if(!categoryMatcher.matches() || !goodAgeFormat){
+                            popularBookList= lbs.getPopularBookList(yearOfBirth, categoryTF.getText());
+                            success=true;
+                        }
+                        else{
+                            popText.setText("Lack of data");
+                            popupStage.show();
+                        }
+                    }else{
+                        if(goodAgeFormat) {
+                            popularBookList = lbs.getPopularBookList(yearOfBirth);
+                            success = true;
+                        }
+                    }
+                }
+                else{
+                    if(!categoryMatcher.matches()){
+                        popularBookList= lbs.getPopularBookList(categoryTF.getText());
+                        success = true;
+                    }
+                }
+            }else{
+                popularBookList=lbs.getPopularBookList();
+                success=true;
+            }
+            if(success){
+                bookTable.setItems(popularBookList);
+            }
+        });
         ImageView backButton = createBackIcon();
         goButton.setPrefHeight(25);
-        pane.getChildren().addAll(text, cba,ageTF, cbc, categoryTF, goButton, backButton);
+        pane.getChildren().addAll(text, cba,ageTF, cbc, categoryTF, goButton, backButton, bookTable);
         return pane;
     }
 
@@ -157,12 +228,12 @@ public class GUI {
             Matcher isbnMatcher = patternEmpty.matcher(cardNumberTF.getText());
             Matcher cardNumberMatcher = patternEmpty.matcher(cardNumberTF.getText());
             if(!isbnMatcher.matches() && !cardNumberMatcher.matches()){
-                popText.setText(lbs.addDeleteRental(isbnTF.getText() , Integer.parseInt(cardNumber.getText())));
+                popText.setText(lbs.addUpdateRental(isbnTF.getText() , Integer.parseInt(cardNumberTF.getText())));
             }
             else{
                 popText.setText("Lack of data, or bad provided data");
             }
-            popupStage.show();;
+            popupStage.show();
         });
         ImageView backButton = createBackIcon();
         pane.getChildren().addAll(enterRentalData, isbn, cardNumber, isbnTF, cardNumberTF, okButton ,backButton);
